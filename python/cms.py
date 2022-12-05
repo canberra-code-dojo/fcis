@@ -1,5 +1,8 @@
 import datetime, json, requests
 
+def user_count(posts):
+    return len({post["userId"] for post in posts})
+
 def store_cms_summary_report():
     print("Getting CMS data")
     response = requests.get("https://jsonplaceholder.typicode.com/posts")
@@ -13,12 +16,8 @@ def store_cms_summary_report():
         report_filename = "cms-" + today + ".json"
         with open(report_filename, "w") as summary_file:
             summary = { "posts": 0, "users": 0, "mean_posts_per_user": 0 }
-            users = []
-            for post in posts:
-                if post["userId"] not in users:
-                    users.append(post["userId"])
             summary["posts"] = len(posts)
-            summary["users"] = len(users)
+            summary["users"] = user_count(posts)
             summary["mean_posts_per_user"] = round(summary["posts"] / summary["users"])
             summary_file.write(json.dumps(summary))
             print("Wrote CMS report", flush=True)
