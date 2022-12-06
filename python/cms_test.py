@@ -38,5 +38,14 @@ class TestCMS(unittest.TestCase):
     def test_user_count(self, expected_count, posts, message):
         self.assertEqual(expected_count, cms.user_count(posts), message)
 
+    @parameterized.expand([
+        (100, 10, '{"posts": 100, "users": 10, "mean_posts_per_user": 10}'),
+        (10, 10, '{"posts": 10, "users": 10, "mean_posts_per_user": 1}')
+    ])
+    def test_summary(self, post_count, user_count, expected):
+        summary = cms.summarise(post_count, user_count)
+        self.assertEqual(expected, summary)
+
+
 if __name__ == '__main__':
     unittest.main()
