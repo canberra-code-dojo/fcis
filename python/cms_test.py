@@ -1,5 +1,6 @@
 import datetime, json, os, unittest
 import cms
+from parameterized import parameterized
 
 today = datetime.date.today().isoformat()
 print("todays date is %s" % today)
@@ -30,12 +31,12 @@ class TestCMS(unittest.TestCase):
             report = json.load(report_file)
         self.assertEqual(10, report["mean_posts_per_user"], "average posts per user should be 10")
 
-    def test_user_count(self):
-        posts_with_one_user = [{"userId": 1}]
-        self.assertEqual(1, cms.user_count(posts_with_one_user), "user count should be 1")
-
-        posts_with_two_users = [{"userId": 1}, {"userId": 2}, {"userId": 1}]
-        self.assertEqual(2, cms.user_count(posts_with_two_users), "user count should be 2")
+    @parameterized.expand([
+        (1, [{"userId": 1}], "user count should be 1"),
+        (2, [{"userId": 1}, {"userId": 2}, {"userId": 1}], "user count should be 2")
+    ])
+    def test_user_count(self, expected_count, posts, message):
+        self.assertEqual(expected_count, cms.user_count(posts), message)
 
 if __name__ == '__main__':
     unittest.main()
