@@ -23,7 +23,7 @@ Starter code is provided in the following languages:
 
 ## Contributing
 
-Contributions are welcome. Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to contribute.
+Contributions are welcome. If you would like to contribute a new implementation of the kata in a different language, please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions.
 
 ## License
 
