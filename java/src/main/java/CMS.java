@@ -1,11 +1,9 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +22,8 @@ public class CMS {
         String postsText = "";
         try {
             URL postsUrl = new URL("https://jsonplaceholder.typicode.com/posts");
-            try (Scanner scanner = new Scanner(postsUrl.openStream(), UTF_8)) {
-                scanner.useDelimiter("\\A");
-                postsText = scanner.hasNext() ? scanner.next() : "";
+            try (InputStream is = postsUrl.openStream()) {
+                postsText = new String(is.readAllBytes(), UTF_8);
             }
         } catch (IOException ex) {
             System.err.printf("No valid JSON response from CMS, error %s", ex.getMessage());
