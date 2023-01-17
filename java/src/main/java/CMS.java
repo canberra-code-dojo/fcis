@@ -7,9 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ISO_DATE;
@@ -35,8 +35,14 @@ public class CMS {
         JSONArray posts = new JSONArray(postsText);
         System.out.printf("CMS data has %d records%n", posts.length());
 
-        Set<Integer> userIds = new HashSet<>();
-        posts.forEach(post -> userIds.add(((JSONObject)post).getInt("userId")));
+        List<Integer> userIds = new ArrayList<>();
+        for(int i = 0; i < posts.length(); i++) {
+            JSONObject post = (JSONObject)posts.get(i);
+            int userId = post.getInt("userId");
+            if (!userIds.contains(userId)) {
+                userIds.add(userId);
+            }
+        }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(REPORT_FILE))) {
             int postCount = posts.length();
