@@ -1,15 +1,13 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ISO_DATE;
@@ -24,9 +22,8 @@ public class CMS {
         String postsText = "";
         try {
             URL postsUrl = new URL("https://jsonplaceholder.typicode.com/posts");
-            try (Scanner scanner = new Scanner(postsUrl.openStream(), UTF_8)) {
-                scanner.useDelimiter("\\A");
-                postsText = scanner.hasNext() ? scanner.next() : "";
+            try (InputStream is = postsUrl.openStream()) {
+                postsText = new String(is.readAllBytes(), UTF_8);
             }
         } catch (IOException ex) {
             System.err.printf("No valid JSON response from CMS, error %s", ex.getMessage());
@@ -35,8 +32,14 @@ public class CMS {
         JSONArray posts = new JSONArray(postsText);
         System.out.printf("CMS data has %d records%n", posts.length());
 
-        Set<Integer> userIds = new HashSet<>();
-        posts.forEach(post -> userIds.add(((JSONObject)post).getInt("userId")));
+        List<Integer> userIds = new ArrayList<>();
+        for(int i = 0; i < posts.length(); i++) {
+            JSONObject post = (JSONObject)posts.get(i);
+            int userId = post.getInt("userId");
+            if (!userIds.contains(userId)) {
+                userIds.add(userId);
+            }
+        }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(REPORT_FILE))) {
             int postCount = posts.length();
